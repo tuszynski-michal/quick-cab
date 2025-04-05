@@ -15,16 +15,14 @@ export const AdminPanel = () => {
     const [status, setStatus] = useState<string>("waiting");
     const [message, setMessage] = useState("");
 
-    const {submit, success, error} = useSubmit(createRide)
+    const {submit} = useSubmit(createRide)
 
-    const handleUpdate = async () => {
-        await submit({data: {status}})
-
-        if (success) {
+    const handleUpdate = () => {
+        submit({data: {status}}).then(() => {
             setMessage(`✅ Status changed to "${status}"`);
-        } else {
+        }).catch(error => {
             setMessage(`❌ Error: ${error}`);
-        }
+        })
     };
 
     return (
