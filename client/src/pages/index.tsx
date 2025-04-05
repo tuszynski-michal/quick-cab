@@ -1,15 +1,31 @@
 import Head from "next/head";
 import {useFetch} from "@hyper-fetch/react";
+import {useEffect} from "react";
 
-import {useSocketRideStatus} from "@/hooks/use-socket-ride-status"
 import {AdminPanel} from "@/components";
-import {getRides} from "@/api";
+import {getRides, Ride} from "@/api";
+import {useSocket} from "@/hooks/use-socket/hook";
 
 export default function Home() {
-    const {ride} = useSocketRideStatus();
+    const {socket, isConnected} = useSocket({namespace: "/rides"});
 
-    const {data, loading} = useFetch(getRides)
-    console.log(data)
+    const {data, setData, loading} = useFetch(getRides)
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.connect();
+
+        socket.on("rides:create", (ride: Ride) => {
+            setData([...(data ?? []), ride]);
+        });
+
+        return () => {
+            socket.off("rides:create");
+            socket.disconnect();
+        };
+    }, [socket, data]);
+
     return (
         <>
             <Head>

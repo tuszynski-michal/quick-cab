@@ -1,5 +1,7 @@
 import {Request, Response, Router} from 'express';
+
 import {rides} from '../mocks/ride-db';
+import {ridesSocket} from "../app";
 
 const router = Router();
 
@@ -15,6 +17,8 @@ router.post("/", (req: Request, res: Response) => {
     }
 
     rides.push(newRide);
+
+    ridesSocket.emit("rides:create", newRide);
 
     res.status(201).json(newRide);
 })

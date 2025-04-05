@@ -5,7 +5,6 @@ import {Server} from "socket.io";
 import dotenv from 'dotenv';
 
 import ridesRouter from "./routes/rides";
-import {rides} from './mocks/ride-db'
 
 dotenv.config();
 
@@ -26,17 +25,11 @@ app.use(express.json());
 // Routes
 app.use("/rides", ridesRouter)
 
+export const ridesSocket = io.of("/rides");
+
 // Websocket
-io.on("connection", (socket) => {
+ridesSocket.on("connection", (socket) => {
     console.log("User conneted: ", socket.id);
-
-    socket.on("disconnect", () => {
-        console.log("User disconnected: ", socket.id);
-    });
-
-    socket.on("updateStatus", () => {
-        io.emit("statusChanged", rides);
-    });
 });
 
 const PORT = process.env.PORT || 4000;

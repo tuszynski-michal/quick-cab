@@ -1,6 +1,6 @@
 import {clientApi} from "@/api/client.api";
 
-type Ride = {
+export type Ride = {
     id: number;
     status: string;
     username?: string
